@@ -9,9 +9,9 @@ module.exports = function(grunt) {
           /* Compile components' less stylesheets */
           {
             expand: true, // Enable dynamic expansion.
-            cwd: './css', // Src matches are relative to this path.
+            cwd: './public/css', // Src matches are relative to this path.
             src: ['**/style.less'], // Actual pattern(s) to match.
-            dest: './css', // Destination path prefix.
+            dest: './public/css', // Destination path prefix.
             ext: '.css' // Dest filepaths will have this extension.
           }
         ]
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
       },
       target: {
         files: {
-          './css/style.min.css': ['./css/style.css']
+          './public/css/style.min.css': ['./public/css/style.css']
         }
       }
     },
@@ -34,8 +34,8 @@ module.exports = function(grunt) {
     /*JS Concat*/
     concat: {
       all: {
-        src: ['./jsapp/**/**.js'],
-        dest: "./js/bundle.js"
+        src: ['./public/jsapp/lib/**.js', './public/jsapp/plugins/**.js', './public/jsapp/layout/**.js', './public/jsapp/pages/**.js', './public/jsapp/**.js'],
+        dest: "./public/js/script.js"
       }
     },
 
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
     uglify: {
       my_target: {
         files: {
-          './js/bundle.min.js': ['./js/bundle.js']
+          './public/js/script.min.js': ['./public/js/script.js']
         }
       }
     },
@@ -51,14 +51,14 @@ module.exports = function(grunt) {
     svg_sprite: {
       basic: {
         expand              : true,
-        cwd                 : 'images',
+        cwd                 : 'public/images',
         src                 : ['svg/**.svg'],
         dest                : '',
         options             : {
           mode            : {
-            css         : {     // Activate the «css» mode
+            css         : {
               render  : {
-                less : true  // Activate CSS output (with default options)
+                less : true
               }
             }
           }
@@ -66,12 +66,34 @@ module.exports = function(grunt) {
       }
     },
 
+    sprite:{
+      all: {
+        src: 'public/images/sprites/*.png',
+        dest: 'public/images/iconset.png',
+        destCss: 'public/css/_iconset.less'
+      }
+    },
+
+    postcss: {
+        options: {
+            map: true,
+            processors: [
+                require('autoprefixer')({
+                    browsers: ['last 2 versions']
+                })
+            ]
+        },
+        dist: {
+            src: 'public/css/style.css'
+        }
+    },
+
     /* Watching for changes in project directory */
     watch: {
       /* Watching for .less files changes */
       less: {
         files: [
-          './css/**/**.less'
+          './public/css/**/**.less'
         ],
         tasks: ['less:development', 'cssmin'],
         options: {
@@ -80,7 +102,7 @@ module.exports = function(grunt) {
       },
       js: {
         files: [
-          './jsapp/**/**.js'
+          './public/jsapp/**/**.js'
         ],
         tasks: ['concat', 'uglify'],
         options: {
@@ -99,9 +121,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-svg-sprite');
+  grunt.loadNpmTasks('grunt-spritesmith');
+  grunt.loadNpmTasks('grunt-postcss');
 
-  grunt.registerTask('default', ['less', 'cssmin', 'concat', 'uglify', 'watch']);
-  grunt.registerTask('build', ['less', 'watch']);
-  grunt.registerTask('sprite', ['svg_sprite']);
+  grunt.registerTask('default', ['less', 'postcss:dist', 'cssmin', 'concat', 'uglify', 'watch']);
+  grunt.registerTask('build', ['less', 'postcss:dist', 'cssmin', 'concat', 'uglify']);
+  grunt.registerTask('svg', ['svg_sprite']);
 
 };

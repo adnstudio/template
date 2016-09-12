@@ -2,7 +2,6 @@
  * Переменные
  **/
 
-
 @font: sans-serif;
 @borderRadius: 5px;
 
@@ -10,28 +9,23 @@
  * Миксины, разное
  ****/
 
+.relative {
+    position: relative;
+}
+
 .sizing() {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
 .border-radius(@radius: @borderRadius) {
+    -webkit-border-radius: @radius;
     border-radius: @radius;
 }
 
 .size(@width, @height: @width) {
     width:  @width;
     height: @height;
-}
-
-.iconset-svg (@left, @top, @width, @height: @width) {
-    .size(@width, @height);
-    background: url('/images/iconset.svg') (-1 * @left) (-1 * @top) no-repeat;
-}
-
-.iconset (@left, @top, @width, @height: @width) {
-    .size(@width, @height);
-    background: url('/images/iconset.png') (-1 * @left) (-1 * @top) no-repeat;
 }
 
 .relativePos(@top, @left:@top) {
@@ -44,6 +38,14 @@
     content: '';
     display: block;
     position: absolute;
+}
+
+.menu-icon() {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 15px;
+    top: 13px;
 }
 
 .hover-opacity(@opacity: 0.75) {
@@ -77,8 +79,52 @@
             transform: rotate(@degree);
 }
 
+.scale(@scale) {
+    -webkit-transform: scale(@scale);
+        -ms-transform: scale(@scale);
+            transform: scale(@scale);
+}
+
 .transform-origin(@x, @y) {
     -webkit-transform-origin: @x @y;
         -ms-transform-origin: @x @y;
             transform-origin: @x @y;
 }
+
+.placeholder(@color){
+
+}
+
+/* =============================================================================
+   Screen size variables
+   ========================================================================== */
+
+@screen-desktop:                    940px;
+@screen-ipad:                    768px;
+@screen-android:                    740px;
+@screen-mobile:                    568px;
+
+/* =============================================================================
+   Media queries for different screen sizes
+   ========================================================================== */
+
+// Desktop
+.screen-desktop(@rules) {
+    @media (max-width: @screen-desktop) { @rules(); }
+}
+
+// ipad
+.screen-ipad(@rules) {
+    @media (max-width: @screen-ipad) { @rules(); }
+}
+
+// android
+.screen-android(@rules) {
+    @media (max-width: @screen-android) { @rules(); }
+}
+
+// Mobile
+.screen-mobile(@rules) {
+    @media (max-width: @screen-mobile) { @rules(); }
+}
+
